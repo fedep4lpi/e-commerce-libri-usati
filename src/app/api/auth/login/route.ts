@@ -1,8 +1,8 @@
 import { PrismaClient } from "@prisma/client"
 import { NextRequest, NextResponse } from "next/server"
 import { z } from 'zod'
-import bcrypt from 'bcryptjs'
-import jwt from 'fast-jwt'
+import bcrypt from 'bcrypt'
+import { SignJWT } from 'jose'
 
 const bodySchema = z.object({
     username: z.string().nonempty().min(8).max(20),
@@ -10,8 +10,6 @@ const bodySchema = z.object({
 })
 
 const prisma = new PrismaClient()
-
-const asyncSigner = jwt.createSigner({key: async () => process.env.JWT_KEY})
 
 export async function POST (req: NextRequest) {
 
@@ -31,7 +29,12 @@ export async function POST (req: NextRequest) {
 
         await bcrypt.compare(password, passwordHash)
 
-        const token = await asyncSigner({ username: username })
+        const key = new TextEncoder().encode(process.env.JWT_KEY)
+        const Signer = new SignJWT({ usename: username })
+        const token = await Signer
+        .setProtectedHeader({
+            alg: process.env.JWT_ALG
+        }).sign(key)
 
         const response = NextResponse.json({
             message: 'User logged with sucess',
@@ -51,8 +54,10 @@ export async function POST (req: NextRequest) {
 
     } catch (err) {
 
+        console.log(err)
+
         return NextResponse.json(
-            { message: err },
+            { message: String(err) },
             { status: 400}
         )
 

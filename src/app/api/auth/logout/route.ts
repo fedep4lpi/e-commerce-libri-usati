@@ -6,12 +6,7 @@ export async function GET() {
         message: 'user unsigned with success'
     })
 
-    response.cookies.delete({
-        name: 'token',
-        httpOnly: true,
-        secure: true,
-        sameSite: 'strict',
-    })
+    response.cookies.delete({ name: 'token' })
 
     return response
 }

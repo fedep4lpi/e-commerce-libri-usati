@@ -14,3 +14,13 @@ model Users {
   email String @unique
   isVerified Boolean @default(false)
 }
+
+model Logs {
+  id Int @id @default(autoincrement())
+  method String
+  url String
+  username String
+  userAgent String
+  ip String?
+  time DateTime
+}

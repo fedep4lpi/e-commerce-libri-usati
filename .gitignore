@@ -39,3 +39,6 @@ next-env.d.ts
 # data
 data
 public/images
+
+# python
+__pycache__

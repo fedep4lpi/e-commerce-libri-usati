@@ -4,15 +4,18 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options
 import os
 import time
+import shutil
+import sqlite3
 
-RELATIVE_PATH = os.path.abspath("./data/csv")
+CSV_RELATIVE_PATH = os.path.abspath("./data/csv")
+DB_RELATIVE_PATH = os.path.abspath("./data/sqlite.db")
 
 os.environ['MOZ_HEADLESS'] = '1'
 
 options = Options()
 options.set_preference("browser.download.folderList", 2)
 options.set_preference("browser.download.manager.showWhenStarting", False)
-options.set_preference("browser.download.dir", RELATIVE_PATH)
+options.set_preference("browser.download.dir", CSV_RELATIVE_PATH)
 options.set_preference("browser.helperApps.neverAsk.saveToDisk", "text/csv")
 
 
@@ -22,7 +25,7 @@ def download_wait():
     while dl_wait:
         time.sleep(1)
         dl_wait = False
-        for fname in os.listdir(RELATIVE_PATH):
+        for fname in os.listdir(CSV_RELATIVE_PATH):
             if fname.endswith('.part'):
                 dl_wait = True
         seconds += 1
@@ -31,7 +34,9 @@ def download_wait():
     return seconds
 
 
-def start():
+def load():
+
+    shutil.rmtree(CSV_RELATIVE_PATH)
 
     driver = webdriver.Firefox(options = options)
 
@@ -40,15 +45,61 @@ def start():
 
     for elem in elems:
         elem.click()
-        print(download_wait())
+        download_wait()
 
+    time.sleep(1)
     driver.close()
 
-    file_list = os.listdir(RELATIVE_PATH)
+    db = sqlite3.Connection(DB_RELATIVE_PATH)
 
+    db.execute("""--sql DROP TABLE adozione_libri;""")
+
+    ''' db.execute("""--sql
+    CREATE TABLE adozione_libri (
+	    id INTEGER,
+        codicescuola TEXT,
+        annocorso	INTEGER,
+        sezioneanno	TEXT,
+        tipogradoscuola	TEXT,
+        combinazione	TEXT,
+        disciplina TEXT,
+        codiceisbn TEXT,
+        autori TEXT,
+        titolo TEXT,
+        sottotitolo TEXT,
+        volume TEXT,
+        editore TEXT,
+        prezzo REAL,
+        nuovaadoz INTEGER,
+        daacquist INTEGER,
+        consigliato INTEGER,
+        PRIMARY KEY(id)
+    );""") '''
+
+    file_list = os.listdir(CSV_RELATIVE_PATH)
     for fname in file_list:
+
+        df = pd.read_csv(CSV_RELATIVE_PATH+'/'+fname)
+
+        df.columns= df.columns.str.lower()
         
         regione = "".join(ch for ch in fname if ch.isalpha())
         regione = regione.removeprefix("ALT")
         regione = regione.removesuffix("csv")
-        print(regione)
+        df['regione'] = regione
+
+        booleans = ["nuovaadoz","daacquist","consigliato"]
+        for boolean in booleans:
+            df[boolean] = df[boolean].replace('Si', 1)
+            df[boolean] = df[boolean].replace('No', 0)
+
+        df["prezzo"] = df["prezzo"].replace(',','.', regex=True)
+        df["prezzo"] = df["prezzo"].astype('float')
+
+        df["sottotitolo"] = df["sottotitolo"].replace('ND', None)
+
+        df.to_sql(name='LIBRI', con=db, if_exists='append', index=False)
+    
+    db.close()
+
+    shutil.rmtree(CSV_RELATIVE_PATH)

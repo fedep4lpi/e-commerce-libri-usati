@@ -9,9 +9,8 @@ datasource db {
 
 model Users {
   id              Int @id @default(autoincrement())
-  username        String @unique
-  passwordHash    String
   email           String @unique
+  passwordHash    String
   isVerified      Boolean @default(false)
   catalogo_libri  Catalogo_libri[]
 }

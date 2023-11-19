@@ -6,9 +6,8 @@ import bcrypt from 'bcrypt'
 const prisma = new PrismaClient()
 
 const bodySchema = z.object({
-    username: z.string().min(8).max(20),
-    password: z.string().min(8).max(20),
-    email: z.string().email()
+    email: z.string().email(),
+    password: z.string().min(8).max(20)
 })
 
 export async function POST (req: NextRequest) {
@@ -16,22 +15,21 @@ export async function POST (req: NextRequest) {
     try {
 
         const body = await bodySchema.parseAsync(await req.json())
-        const { username, password, email } = body
+        const { email, password } = body
 
         const passwordHash = await bcrypt.hash(password, 10)
 
         await prisma.users.create(
         { data: {
-            username: username,
-            passwordHash: passwordHash,
-            email: email
+            email: email,
+            passwordHash: passwordHash
         }})
 
         setTimeout(()=>{
             async () => {
                 await prisma.users.delete({
                     where: {
-                        username: username,
+                        email: email,
                         isVerified: false
                     }
                 })

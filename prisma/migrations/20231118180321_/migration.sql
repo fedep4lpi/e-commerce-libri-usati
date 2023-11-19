@@ -1,9 +1,8 @@
 -- CreateTable
 CREATE TABLE "Users" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "username" TEXT NOT NULL,
-    "passwordHash" TEXT NOT NULL,
     "email" TEXT NOT NULL,
+    "passwordHash" TEXT NOT NULL,
     "isVerified" BOOLEAN NOT NULL DEFAULT false
 );
 
@@ -39,9 +38,6 @@ CREATE TABLE "Adozione_libri" (
     "consigliato" TEXT NOT NULL,
     "regione" TEXT NOT NULL
 );
-
--- CreateIndex
-CREATE UNIQUE INDEX "Users_username_key" ON "Users"("username");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Users_email_key" ON "Users"("email");

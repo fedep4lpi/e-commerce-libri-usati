@@ -7,6 +7,8 @@ export async function middleware(req: NextRequest) {
    
     if(typeof token?.value === 'string' && token.value.length>0) {
 
+        //IF IS FALSE TOKEN?
+
         const key = new TextEncoder().encode(process.env.JWT_KEY)
         const { payload } = await jwtVerify(token.value, key, {
             algorithms: [process.env.JWT_ALG]
@@ -16,6 +18,12 @@ export async function middleware(req: NextRequest) {
             const { username } = payload
             req.headers.set('username', username)
         }
+    }
+
+    const notAllowedPaths = ['/sell', '/directs', '/account']
+
+    if(!token && notAllowedPaths.includes(req.nextUrl.pathname)) {
+        return NextResponse.redirect(new URL('/login', req.url))
     }
 
     return NextResponse.next()

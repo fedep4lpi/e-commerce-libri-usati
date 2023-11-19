@@ -8,19 +8,42 @@ datasource db {
 }
 
 model Users {
-  id       Int    @id @default(autoincrement())
-  username String @unique
-  passwordHash String
-  email String @unique
-  isVerified Boolean @default(false)
+  id              Int @id @default(autoincrement())
+  username        String @unique
+  passwordHash    String
+  email           String @unique
+  isVerified      Boolean @default(false)
+  catalogo_libri  Catalogo_libri[]
 }
 
-model Logs {
-  id Int @id @default(autoincrement())
-  method String
-  url String
-  username String
-  userAgent String
-  ip String?
-  time DateTime
+model Catalogo_libri {
+  id              Int @id @default(autoincrement())
+  codiceisbn      String
+  username        String 
+  photo_url       String @unique
+  prezzo          Int
+  adozione_libri  Adozione_libri @relation(fields: [codiceisbn], references: [codiceisbn])
+  user            Users @relation(fields: [id], references: [id])
+}
+
+model Adozione_libri {
+  id              Int @id @default(autoincrement())
+  codicescuola    String
+  annocorso       Int
+  sezioneanno     String
+  tipogradoscuola String
+  combinazione    String
+  disciplina      String
+  codiceisbn      String @unique
+  autori          String
+  titolo          String
+  sottotitolo     String?
+  volume          String
+  editore         String
+  prezzo          Float
+  nuovaadoz       Boolean
+  daacquist       Boolean
+  consigliato     String
+  regione         String
+  catalogo_libri  Catalogo_libri[] 
 }

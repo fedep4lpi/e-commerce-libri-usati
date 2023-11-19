@@ -2,9 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 import { v4 as uuidv4 } from 'uuid'
 import sharp from 'sharp'
 import { z } from 'zod'
+import { PrismaClient } from "@prisma/client"
+
+const prisma = new PrismaClient()
 
 const bodySchema = z.object({
-  isbn: z.string().nonempty(),
+  isbn: z.string(),
   price: z.number()
 })
 
@@ -17,8 +20,6 @@ export async function POST(request: NextRequest) {
     const json: string | null = data.get('json') as unknown as string
 
     const body = await bodySchema.parseAsync(JSON.parse(json))
-
-    console.log(body)
 
     if(!file) {
       return NextResponse.json({
@@ -35,9 +36,20 @@ export async function POST(request: NextRequest) {
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
 
-    const path = `./public/images/${uuidv4()}.webp`
+    const uid = uuidv4()
+    const path = `./public/images/${uid}.webp`
 
     await sharp(buffer).webp().toFile(path)
+
+    await prisma.catalogo_libri.create({
+      data: {
+        codiceisbn: body.isbn,
+        //@ts-ignore
+        username: request.headers.get('username'),
+        photo_url: `${uid}.webp`,
+        prezzo: body.price
+      }
+    })
 
   } catch (err) {
     console.log(err)

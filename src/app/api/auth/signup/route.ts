@@ -6,8 +6,8 @@ import bcrypt from 'bcrypt'
 const prisma = new PrismaClient()
 
 const bodySchema = z.object({
-    username: z.string().nonempty().min(8).max(20),
-    password: z.string().nonempty().min(8).max(20),
+    username: z.string().min(8).max(20),
+    password: z.string().min(8).max(20),
     email: z.string().email()
 })
 

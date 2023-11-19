@@ -5,8 +5,8 @@ import bcrypt from 'bcrypt'
 import { SignJWT } from 'jose'
 
 const bodySchema = z.object({
-    username: z.string().nonempty().min(8).max(20),
-    password: z.string().nonempty().min(8).max(20),
+    username: z.string().min(8).max(20),
+    password: z.string().min(8).max(20),
 })
 
 const prisma = new PrismaClient()
@@ -20,7 +20,8 @@ export async function POST (req: NextRequest) {
 
         const { passwordHash } = await prisma.users.findUniqueOrThrow({
             where: {
-                username: username
+                username: username,
+                //isVerified: true
             },
             select: {
                 passwordHash: true

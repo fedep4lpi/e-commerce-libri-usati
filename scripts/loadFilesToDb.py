@@ -1,3 +1,4 @@
+from sys import exception
 import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -36,7 +37,10 @@ def download_wait():
 
 def load():
 
-    shutil.rmtree(CSV_RELATIVE_PATH)
+    try:
+        shutil.rmtree(CSV_RELATIVE_PATH)
+    except:
+        pass
 
     driver = webdriver.Firefox(options = options)
 
@@ -52,34 +56,38 @@ def load():
 
     db = sqlite3.Connection(DB_RELATIVE_PATH)
 
-    db.execute("""--sql DROP TABLE adozione_libri;""")
+    db.execute("""--sql
+        DROP TABLE adozione_libri;
+    """)
 
-    ''' db.execute("""--sql
-    CREATE TABLE adozione_libri (
-	    id INTEGER,
-        codicescuola TEXT,
-        annocorso	INTEGER,
-        sezioneanno	TEXT,
-        tipogradoscuola	TEXT,
-        combinazione	TEXT,
-        disciplina TEXT,
-        codiceisbn TEXT,
-        autori TEXT,
-        titolo TEXT,
-        sottotitolo TEXT,
-        volume TEXT,
-        editore TEXT,
-        prezzo REAL,
-        nuovaadoz INTEGER,
-        daacquist INTEGER,
-        consigliato INTEGER,
-        PRIMARY KEY(id)
-    );""") '''
+    db.execute("""--sql
+        CREATE TABLE adozione_libri (
+            id INTEGER,
+            codicescuola TEXT,
+            annocorso INTEGER,
+            sezioneanno	TEXT,
+            tipogradoscuola	TEXT,
+            combinazione TEXT,
+            disciplina TEXT,
+            codiceisbn TEXT,
+            autori TEXT,
+            titolo TEXT,
+            sottotitolo TEXT,
+            volume TEXT,
+            editore TEXT,
+            prezzo REAL,
+            nuovaadoz INTEGER,
+            daacquist INTEGER,
+            consigliato INTEGER,
+            regione TEXT,
+            PRIMARY KEY(id)
+        );
+    """)
 
     file_list = os.listdir(CSV_RELATIVE_PATH)
     for fname in file_list:
 
-        df = pd.read_csv(CSV_RELATIVE_PATH+'/'+fname)
+        df = pd.read_csv(CSV_RELATIVE_PATH+'/'+fname, low_memory=False)
 
         df.columns= df.columns.str.lower()
         
@@ -88,7 +96,7 @@ def load():
         regione = regione.removesuffix("csv")
         df['regione'] = regione
 
-        booleans = ["nuovaadoz","daacquist","consigliato"]
+        booleans = ["nuovaadoz","daacquist"]
         for boolean in booleans:
             df[boolean] = df[boolean].replace('Si', 1)
             df[boolean] = df[boolean].replace('No', 0)
@@ -98,7 +106,7 @@ def load():
 
         df["sottotitolo"] = df["sottotitolo"].replace('ND', None)
 
-        df.to_sql(name='LIBRI', con=db, if_exists='append', index=False)
+        df.to_sql(name='adozione_libri', con=db, if_exists='append', index=False)
     
     db.close()
 

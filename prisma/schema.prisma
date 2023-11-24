@@ -4,45 +4,52 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:../data/sqlite.db"
+  url      = "file:../data/db.sqlite3"
 }
 
 model Users {
-  id              Int @id @default(autoincrement())
-  email           String @unique
-  passwordHash    String
-  isVerified      Boolean @default(false)
-  catalogo_libri  Catalogo_libri[]
+  id           Int     @id @default(autoincrement())
+  email        String  @unique
+  passwordHash String
+  isVerified   Boolean @default(false)
+  Catalogo_libri Catalogo_libri[]
 }
 
 model Catalogo_libri {
-  id              Int @id @default(autoincrement())
-  codiceisbn      String
-  username        String 
-  photo_url       String @unique
-  prezzo          Int
-  adozione_libri  Adozione_libri @relation(fields: [codiceisbn], references: [codiceisbn])
-  user            Users @relation(fields: [id], references: [id])
+  id           Int    @id @default(autoincrement())
+  codiceisbn   String
+  email        String
+  photo_url    String @unique
+  prezzo_usato Int
+  Isbn_libri   Isbn_libri? @relation(fields: [codiceisbn], references: [codiceisbn], onDelete: NoAction, onUpdate: NoAction)
+  User         Users? @relation(fields: [email], references: [email], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model Adozione_libri {
-  id              Int @id @default(autoincrement())
-  codicescuola    String
-  annocorso       Int
-  sezioneanno     String
-  tipogradoscuola String
-  combinazione    String
-  disciplina      String
-  codiceisbn      String @unique
-  autori          String
-  titolo          String
-  sottotitolo     String?
-  volume          String
-  editore         String
-  prezzo          Float
-  nuovaadoz       Boolean
-  daacquist       Boolean
-  consigliato     String
-  regione         String
-  catalogo_libri  Catalogo_libri[] 
+  id              Int         @id @default(autoincrement())
+  codicescuola    String?
+  annocorso       Int?
+  sezioneanno     String?
+  tipogradoscuola String?
+  combinazione    String?
+  codiceisbn      String?
+  nuovaadoz       Int?
+  daacquist       Int?
+  consigliato     Int?
+  regione         String?
+  Isbn_libri      Isbn_libri? @relation(fields: [codiceisbn], references: [codiceisbn], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Isbn_libri {
+  id             Int              @id @default(autoincrement())
+  codiceisbn     String?          @unique(map: "sqlite_autoindex_Isbn_libri_1")
+  autori         String?
+  titolo         String?
+  sottotitolo    String?
+  disciplina     String?
+  volume         String?
+  editore        String?
+  prezzo         Float?
+  Adozione_libri Adozione_libri[]
+  Catalogo_libri Catalogo_libri[]
 }

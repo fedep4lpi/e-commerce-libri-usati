@@ -5,8 +5,8 @@ import bcrypt from 'bcrypt'
 import { SignJWT } from 'jose'
 
 const bodySchema = z.object({
-    username: z.string().min(8).max(20),
-    password: z.string().min(8).max(20),
+    email: z.string().email(),
+    password: z.string().min(8).max(30)
 })
 
 const prisma = new PrismaClient()
@@ -14,13 +14,15 @@ const prisma = new PrismaClient()
 export async function POST (req: NextRequest) {
 
     try {
-
-        const body = await bodySchema.parseAsync((await req.json()))
-        const { username, password } = body
+        
+        const tmp = await req.json()
+        console.log(tmp)
+        const body = await bodySchema.parseAsync(tmp)
+        const { email, password } = body
 
         const { passwordHash } = await prisma.users.findUniqueOrThrow({
             where: {
-                username: username,
+                email: email,
                 //isVerified: true
             },
             select: {
@@ -31,7 +33,7 @@ export async function POST (req: NextRequest) {
         await bcrypt.compare(password, passwordHash)
 
         const key = new TextEncoder().encode(process.env.JWT_KEY)
-        const Signer = new SignJWT({ usename: username })
+        const Signer = new SignJWT({ usename: email })
         const token = await Signer
         .setProtectedHeader({
             alg: process.env.JWT_ALG

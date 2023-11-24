@@ -10,9 +10,7 @@ export async function middleware(req: NextRequest) {
         //IF IS FALSE TOKEN?
 
         const key = new TextEncoder().encode(process.env.JWT_KEY)
-        const { payload } = await jwtVerify(token.value, key, {
-            algorithms: [process.env.JWT_ALG]
-        })
+        const { payload } = await jwtVerify(token.value, key)
 
         if(typeof payload.username === 'string') {
             const { username } = payload
@@ -20,10 +18,16 @@ export async function middleware(req: NextRequest) {
         }
     }
 
-    const notAllowedPaths = ['/sell', '/directs', '/account']
+    const notAllowedIfNoLogPaths = ['/sell', '/directs', '/account']
 
-    if(!token && notAllowedPaths.includes(req.nextUrl.pathname)) {
+    if(!token && notAllowedIfNoLogPaths.includes(req.nextUrl.pathname)) {
         return NextResponse.redirect(new URL('/login', req.url))
+    }
+
+    const notAllowedIfLogPaths = ['/login', '/signup']
+
+    if(token && notAllowedIfLogPaths.includes(req.nextUrl.pathname)) {
+        return NextResponse.redirect(new URL('/buy', req.url))
     }
 
     return NextResponse.next()

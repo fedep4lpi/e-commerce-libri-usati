@@ -1,4 +1,3 @@
-from sys import exception
 import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -9,7 +8,7 @@ import shutil
 import sqlite3
 
 CSV_RELATIVE_PATH = os.path.abspath("./data/csv")
-DB_RELATIVE_PATH = os.path.abspath("./data/sqlite.db")
+DB_RELATIVE_PATH = os.path.abspath("./data/db.sqlite3")
 
 os.environ['MOZ_HEADLESS'] = '1'
 
@@ -37,7 +36,7 @@ def download_wait():
 
 def load():
 
-    try:
+    """ try:
         shutil.rmtree(CSV_RELATIVE_PATH)
     except:
         pass
@@ -52,16 +51,16 @@ def load():
         download_wait()
 
     time.sleep(1)
-    driver.close()
+    driver.close() """
 
     db = sqlite3.Connection(DB_RELATIVE_PATH)
 
     db.execute("""--sql
-        DROP TABLE adozione_libri;
+        DROP TABLE IF EXISTS Adozione_libri;
     """)
 
     db.execute("""--sql
-        CREATE TABLE adozione_libri (
+        CREATE TABLE Adozione_libri (
             id INTEGER,
             codicescuola TEXT,
             annocorso INTEGER,
@@ -80,7 +79,8 @@ def load():
             daacquist INTEGER,
             consigliato INTEGER,
             regione TEXT,
-            PRIMARY KEY(id)
+            PRIMARY KEY(id),
+            FOREIGN KEY(codiceisbn) REFERENCES Isbn_libri(codiceisbn)
         );
     """)
 
@@ -106,8 +106,43 @@ def load():
 
         df["sottotitolo"] = df["sottotitolo"].replace('ND', None)
 
-        df.to_sql(name='adozione_libri', con=db, if_exists='append', index=False)
+        df.to_sql(name='Adozione_libri', con=db, if_exists='append', index=False)
+
+    db.execute("""--sql
+        DROP TABLE IF EXISTS Isbn_libri;
+    """)
+
+    db.execute("""--sql
+        CREATE TABLE Isbn_libri (
+            id INTEGER,
+            codiceisbn TEXT UNIQUE,
+            autori TEXT,
+            titolo TEXT,
+            sottotitolo TEXT,
+            disciplina TEXT,
+            volume TEXT,
+            editore TEXT,
+            prezzo REAL,
+            PRIMARY KEY(id)
+        );
+    """)
+
+    db.execute("""--sql
+        INSERT INTO Isbn_libri(codiceisbn, autori, titolo, sottotitolo, disciplina, volume, editore, prezzo)
+        SELECT codiceisbn, autori, titolo, sottotitolo, disciplina, volume, editore, prezzo
+        FROM Adozione_libri
+        GROUP BY codiceisbn;
+    """)
+    db.commit()
+
+    columns_to_delete = ["autori", "titolo", "sottotitolo", "disciplina", "volume", "editore", "prezzo"]
+    for column in columns_to_delete:
+        db.execute(f"""--sql
+            ALTER TABLE Adozione_libri
+            DROP COLUMN {column};
+        """)
+    db.commit()
     
     db.close()
 
-    shutil.rmtree(CSV_RELATIVE_PATH)
+    """ shutil.rmtree(CSV_RELATIVE_PATH) """

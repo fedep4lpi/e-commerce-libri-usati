@@ -7,7 +7,7 @@ const prisma = new PrismaClient()
 
 const bodySchema = z.object({
     email: z.string().email(),
-    password: z.string().min(8).max(20)
+    password: z.string().min(8).max(30)
 })
 
 export async function POST (req: NextRequest) {

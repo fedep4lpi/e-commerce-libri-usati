@@ -1,15 +1,31 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 
-const login = () => {
+const Login = () => {
 
-  const [isLogged, setIsLogged] = useState()
-
-  
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
 
   const handleSubmit = async () => {
-    const data = await fetch('/')
+    const data = await fetch('/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({
+        email: email,
+        password: password
+      })
+    })
+
+    if(data.status === 200) {
+      localStorage.setItem('email', email)
+      setEmail('')
+      setPassword('')
+      location.replace('/buy')
+    }
+
+    const response = await data.json()
+
+    console.log(response)
   }
 
   return (
@@ -28,15 +44,21 @@ const login = () => {
           type='email'
           name='email'
           placeholder='email'
+          onChange={(e)=>{
+            setEmail(e.target.value)
+          }}
           className='h-10 pl-2 rounded-t-md'  
         />
         <input 
           type='password'
           name='password'
           placeholder='password' 
+          onChange={(e)=>{
+            setPassword(e.target.value)
+          }}
           className='h-10 pl-2 rounded-b-md'
         />
-        <p className='mt-5 pl-2'>
+        <p className='mt-5 text-center'>
           Non sei ancora registrato? 
           <Link 
             href='/signup'
@@ -58,4 +80,4 @@ const login = () => {
   )
 }
 
-export default login
+export default Login

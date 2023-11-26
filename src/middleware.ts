@@ -1,20 +1,17 @@
 import { NextResponse, NextRequest } from 'next/server'
-import  { jwtVerify } from 'jose'
+import { jwtVerify } from 'jose'
 
 export async function middleware(req: NextRequest) {
 
-    const token = req.cookies.get('token')
+    let token = req.cookies.get('token')
    
-    if(typeof token?.value === 'string' && token.value.length>0) {
+    if(typeof token?.value === 'string') {
 
-        //IF IS FALSE TOKEN?
-
-        const key = new TextEncoder().encode(process.env.JWT_KEY)
-        const { payload } = await jwtVerify(token.value, key)
-
-        if(typeof payload.username === 'string') {
-            const { username } = payload
-            req.headers.set('username', username)
+        try {
+            const key = new TextEncoder().encode(process.env.JWT_KEY)
+            await jwtVerify(token.value, key)
+        } catch(err){
+            token = undefined
         }
     }
 

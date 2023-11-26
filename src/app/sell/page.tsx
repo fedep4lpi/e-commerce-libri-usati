@@ -64,6 +64,8 @@ const Sell = () => {
           className='w-full pl-2 h-10 rounded-t-sm mb-[0.5px]'
           placeholder='isbn'
           required
+          minLength={13}
+          maxLength={13}
         />
         <input 
           type="number" 

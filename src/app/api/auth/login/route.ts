@@ -15,9 +15,7 @@ export async function POST (req: NextRequest) {
 
     try {
         
-        const tmp = await req.json()
-        console.log(tmp)
-        const body = await bodySchema.parseAsync(tmp)
+        const body = await bodySchema.parseAsync(await req.json())
         const { email, password } = body
 
         const { passwordHash } = await prisma.users.findUniqueOrThrow({
@@ -33,7 +31,7 @@ export async function POST (req: NextRequest) {
         await bcrypt.compare(password, passwordHash)
 
         const key = new TextEncoder().encode(process.env.JWT_KEY)
-        const Signer = new SignJWT({ usename: email })
+        const Signer = new SignJWT({ email: email })
         const token = await Signer
         .setProtectedHeader({
             alg: process.env.JWT_ALG
@@ -56,8 +54,6 @@ export async function POST (req: NextRequest) {
         return response
 
     } catch (err) {
-
-        console.log(err)
 
         return NextResponse.json(
             { message: String(err) },

@@ -36,7 +36,7 @@ def download_wait():
 
 def load():
 
-    """ try:
+    try:
         shutil.rmtree(CSV_RELATIVE_PATH)
     except:
         pass
@@ -51,7 +51,7 @@ def load():
         download_wait()
 
     time.sleep(1)
-    driver.close() """
+    driver.close()
 
     db = sqlite3.Connection(DB_RELATIVE_PATH)
 
@@ -145,4 +145,4 @@ def load():
     
     db.close()
 
-    """ shutil.rmtree(CSV_RELATIVE_PATH) """
+    shutil.rmtree(CSV_RELATIVE_PATH)

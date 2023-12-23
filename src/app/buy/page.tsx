@@ -1,53 +1,46 @@
-'use client'
-import React, { useEffect, useState } from 'react'
+import bookSchema from "./bodySchema"
+import Card from "./card"
+import Search from "./search"
 
-const page = () => {
+export default async function Page({
+  searchParams
+}: {
+  searchParams: { [key: string]: string | string[] | undefined }
+}) {
+  
+  let { a } = searchParams
+  if(typeof a === 'undefined') a = ''
 
-  const [query, setQuery] = useState('')
-  const [data, setData] = useState([])
-
-  useEffect(() => {
-    console.log('inside')
-    const fetchData = async () => {
-      const response = await fetch(
-        '/api/shop', {
-          method: 'POST',
-          body: JSON.stringify({
-            query: query
-          })
-        }
-      )
-      const body = await response.json()
-      if(response.status===200){
-        setData(body.data)
-      } else {
-        console.log(body.err)
+  const fetchData = async (): Promise<Array<bookSchema>> => {
+    const response = await fetch(
+      `http://localhost:${process.env.SERVER_PORT}/api/shop`, {
+        method: 'POST',
+        body: JSON.stringify({
+          query: a
+        }),
+        cache: 'no-store'
       }
-    }
-    fetchData()
-  }, [query])
+    )
+    const body = await response.json()
+    return body.data
+  }
+
+  let data = []
+  data = await fetchData()
 
   return (
     <main className='p-10'>
-      <div className='bg-violet-700 p-4 inline-block mb-5 rounded-lg'>
-        <input 
-          type="text" 
-          onChange={(e)=>{
-            setQuery(e.target.value)
-          }}
-          placeholder='Cerca'
-          className='pl-2 rounded-lg'
-        />
+      <Search/>
+      <div className=' overflow-y-scroll pt-2'>
+        {data.map((book, idx) => {
+          return (
+            <Card 
+              key={idx} 
+              {...book}
+            />
+          )
+        })}
       </div>
-      {data.map((bookData, idx)=>{
-        return (
-          <p key={idx}>
-            {JSON.stringify(bookData)}
-          </p>
-        )
-      })}
     </main>
   )
 }
-
-export default page

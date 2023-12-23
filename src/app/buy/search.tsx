@@ -1,12 +1,44 @@
 'use client'
 import React, { useEffect, useState } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
+import Image from 'next/image'
+import searchIcon from '../../icons/search.svg'
 
 const Search = () => {
 
-  const [query, setQuery] = useState('')
+  const router = useRouter()
+
+  const aParam = useSearchParams().get('a') ?? ''
+  const [query, setQuery] = useState(aParam)
+
+  useEffect(() => {
+    if(query.includes('\n')) {
+      setQuery(() => {
+        return query.replace('\n', '')
+      })
+      //@ts-expect-error
+      const form: HTMLFormElement = document.querySelector('#theSearchForm')
+      form.submit()
+    }
+  }, [query])
+
+  const handleSubmit = ()=>{
+    if(query==='') {
+      router.replace('/buy')
+    } else {
+      router.replace(`/buy?a=${query}`)
+    }
+  }
 
   return (
-    <div className='p-4 bg-violet-700 inline-block rounded-xl'>
+    <form 
+      className='px-4 py-3 bg-violet-700 w-80 h-14 rounded-xl flex items-center'
+      onSubmit={(e)=>{
+        e.preventDefault()
+        handleSubmit()
+      }}
+      id='theSearchForm'
+    >
       <input 
         type='text' 
         value={query}
@@ -14,9 +46,19 @@ const Search = () => {
           setQuery(e.target.value)
         }}
         placeholder='Cerca'
-        className='pl-2 rounded-xl'
+        className='pl-2 rounded-l-xl w-full h-full'
       />
-    </div>
+      <button
+        type='submit'
+        className=' bg-slate-200 h-full px-3 rounded-r-xl'
+      >
+        <Image
+          src={searchIcon}
+          alt='search icon'
+          draggable='false'
+        />
+      </button>
+    </form>
   )
 }
 

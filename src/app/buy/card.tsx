@@ -18,20 +18,20 @@ const Card = (props: bookSchema) => {
         />
       </div>
       <div className=' text-center flex flex-col space-y-4'>
-        <p>
+        <div>
           {props.email}
-        </p>
-        <p>
+        </div>
+        <div>
           ISBN-13: {props.codiceisbn}
-        </p>
+        </div>
       </div>
       <div className=' w-64'>
-        <p className=' text-right'>
+        <div className=' text-right'>
           {props.Isbn_libri.titolo}
           <div className=' flex justify-between mt-2'>
-            <p className=' p-2'>
+            <div className=' p-2'>
               €{props.prezzo_usato}
-            </p>
+            </div>
             <div className=' flex space-x-2'>
               <Link 
                 href={'./'}
@@ -55,7 +55,7 @@ const Card = (props: bookSchema) => {
               </Link>
             </div>
           </div>
-        </p>
+        </div>
       </div>
     </div>
   )

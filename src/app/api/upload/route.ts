@@ -2,10 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { v4 as uuidv4 } from 'uuid'
 import sharp from 'sharp'
 import { z } from 'zod'
-import { PrismaClient } from "@prisma/client"
+import prisma from '@/db'
 import { decodeJwt } from 'jose'
-
-const prisma = new PrismaClient()
 
 const bodySchema = z.object({
   isbn: z.string(),

@@ -1,8 +1,8 @@
 import React from 'react'
 import Image from 'next/image'
 import bookSchema from './bodySchema'
-import contactIcon from '../../icons/contact.svg'
-import infoIcon from '../../icons/info.svg'
+import contactIcon from '@/icons/contact.svg'
+import infoIcon from '@/icons/info.svg'
 import Link from 'next/link'
 
 const Card = (props: bookSchema) => {
@@ -34,7 +34,7 @@ const Card = (props: bookSchema) => {
             </div>
             <div className=' flex space-x-2'>
               <Link 
-                href={'./'}
+                href={`/buy/book/${props.id}`}
                 className=' hover:bg-violet-800 rounded-xl p-2'
               >
                 <Image

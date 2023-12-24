@@ -1,4 +1,5 @@
 type bookSchema = {
+    id?: number,
     email: string,
     codiceisbn: string,
     prezzo_usato: number,

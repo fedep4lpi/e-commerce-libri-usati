@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { ZodError, z } from 'zod'
-import { PrismaClient } from '@prisma/client'
+import prisma from "@/db"
 import bcrypt from 'bcrypt'
-
-const prisma = new PrismaClient()
 
 const bodySchema = z.object({
     email: z.string().email(),

@@ -3,29 +3,18 @@ import { NextRequest, NextResponse } from "next/server"
 import { z } from 'zod'
 
 const bodySchema = z.object({
-    query: z.string()
+    id: z.number().int()
 })
 
 export async function POST(req: NextRequest) {
     
     try {
 
-        const { query } = await bodySchema.parseAsync(await req.json())
+        const { id } = await bodySchema.parseAsync(await req.json())
 
-        const data = await prisma.catalogo_libri.findMany({
+        const data = await prisma.catalogo_libri.findUnique({
             where: {
-                OR: [{
-                        codiceisbn: {
-                            contains: query
-                        }
-                    },{
-                        Isbn_libri: {
-                            titolo: {
-                                contains: query
-                            }
-                        }   
-                    }
-                ]
+                id: id
             },
             select: {
                 id: true,
@@ -44,8 +33,7 @@ export async function POST(req: NextRequest) {
                         prezzo: true
                     }
                 }
-            },
-            take: 20
+            }
         })
 
         return NextResponse.json({ 

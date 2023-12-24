@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
-import searchIcon from '../../icons/search.svg'
+import searchIcon from '@/icons/search.svg'
 
 const Search = () => {
 
@@ -26,7 +26,7 @@ const Search = () => {
     if(query==='') {
       router.replace('/buy')
     } else {
-      router.replace(`/buy?a=${query}`)
+      router.replace(`/buy?a=${query.replaceAll(' ', '+')}`)
     }
   }
 

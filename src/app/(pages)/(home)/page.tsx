@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import IODLLogo from '../icons/IODL_logo.svg'
+import IODLLogo from '@/icons/IODL_logo.svg'
 
 export default function Home() {
   return (

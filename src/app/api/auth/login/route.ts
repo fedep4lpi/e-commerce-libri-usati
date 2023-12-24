@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client"
+import prisma from "@/db"
 import { NextRequest, NextResponse } from "next/server"
 import { z } from 'zod'
 import bcrypt from 'bcrypt'
@@ -8,8 +8,6 @@ const bodySchema = z.object({
     email: z.string().email(),
     password: z.string().min(8).max(30)
 })
-
-const prisma = new PrismaClient()
 
 export async function POST (req: NextRequest) {
 

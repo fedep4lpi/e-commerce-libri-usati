@@ -3,29 +3,42 @@ import { jwtVerify } from 'jose'
 
 export async function middleware(req: NextRequest) {
 
-    let token = req.cookies.get('token')
+    let isAuth = false
+    const token = req.cookies.get('token')
+    const requestHeaders = new Headers(req.headers)
    
     if(typeof token?.value === 'string') {
 
         try {
             const key = new TextEncoder().encode(process.env.JWT_KEY)
-            await jwtVerify(token.value, key)
+            const { email } = (await jwtVerify(token.value, key)).payload
+            //@ts-ignore
+            requestHeaders.set('email', email)
+            isAuth = true
         } catch(err){
-            token = undefined
+            return NextResponse.json({
+                msg: 'user not authorized'
+            }, { status: 401 })
         }
     }
 
-    const notAllowedIfNoLogPaths = ['/sell', '/directs', '/account']
+    const notAllowedIfNoLogPaths = ['/sell', '/directs', '/account', '/api/messages']
 
-    if(!token && notAllowedIfNoLogPaths.includes(req.nextUrl.pathname)) {
+    if(!isAuth && notAllowedIfNoLogPaths.includes(req.nextUrl.pathname)) {
         return NextResponse.redirect(new URL('/login', req.url))
     }
 
     const notAllowedIfLogPaths = ['/login', '/signup']
 
-    if(token && notAllowedIfLogPaths.includes(req.nextUrl.pathname)) {
+    if(isAuth && notAllowedIfLogPaths.includes(req.nextUrl.pathname)) {
         return NextResponse.redirect(new URL('/buy', req.url))
     }
 
-    return NextResponse.next()
+    const response = NextResponse.next({
+        request: {
+            headers: requestHeaders
+        }
+    })
+
+    return response
 }

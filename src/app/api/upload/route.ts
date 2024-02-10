@@ -3,7 +3,6 @@ import { v4 as uuidv4 } from 'uuid'
 import sharp from 'sharp'
 import { z } from 'zod'
 import prisma from '@/db'
-import { decodeJwt } from 'jose'
 
 const bodySchema = z.object({
   isbn: z.string(),
@@ -38,17 +37,13 @@ export async function POST(req: NextRequest) {
     const uid = uuidv4()
     const path = `./public/images/${uid}.webp`
 
-    const token = req.cookies.get('token')
-    //@ts-ignore
-    const { email } = decodeJwt(token.value)
-
     await sharp(buffer).webp().toFile(path)
 
     await prisma.catalogo_libri.create({
       data: {
         codiceisbn: body.isbn,
         //@ts-ignore
-        email: email,
+        email: req.headers.get('email'),
         photo_url: `${uid}.webp`,
         prezzo_usato: body.price
       }

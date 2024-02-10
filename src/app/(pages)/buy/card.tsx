@@ -8,13 +8,14 @@ import Link from 'next/link'
 const Card = (props: bookSchema) => {
 
   return (
-    <div className=' bg-violet-700 text-white rounded-xl h-40 flex items-center justify-between p-5 my-5'>
-      <div className='  w-56 h-full relative'>
+    <div className=' bg-violet-700 text-white rounded-xl h-48 flex items-center justify-between p-5 my-5'>
+      <div className=' h-full aspect-video relative'>
         <Image
           src={`/images/${props.photo_url}`}
           alt='foto libro'
           fill
-          style={{objectFit:"cover"}}
+          draggable={false}
+          className=' select-none object-cover'
         />
       </div>
       <div className=' text-center flex flex-col space-y-4'>

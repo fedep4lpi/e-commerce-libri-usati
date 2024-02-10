@@ -22,15 +22,15 @@ export async function middleware(req: NextRequest) {
         }
     }
 
-    const notAllowedIfNoLogPaths = ['/sell', '/directs', '/account', '/api/messages']
+    const notAllowedIfNotAuthPaths = ['/sell', '/directs', '/account', '/api/messages']
 
-    if(!isAuth && notAllowedIfNoLogPaths.includes(req.nextUrl.pathname)) {
+    if(!isAuth && notAllowedIfNotAuthPaths.includes(req.nextUrl.pathname)) {
         return NextResponse.redirect(new URL('/login', req.url))
     }
 
-    const notAllowedIfLogPaths = ['/login', '/signup']
+    const notAllowedIfAuthPaths = ['/login', '/signup']
 
-    if(isAuth && notAllowedIfLogPaths.includes(req.nextUrl.pathname)) {
+    if(isAuth && notAllowedIfAuthPaths.includes(req.nextUrl.pathname)) {
         return NextResponse.redirect(new URL('/buy', req.url))
     }
 

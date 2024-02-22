@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:../data/db.sqlite3"
+}
+
+model Users {
+  id             Int              @id @default(autoincrement())
+  email          String           @unique
+  passwordHash   String
+  isVerified     Boolean          @default(false)
+  Catalogo_libri Catalogo_libri[]
+  Sender         Messages[] @relation("sender")
+  Receiver       Messages[] @relation("receiver")
+}
+
+model Catalogo_libri {
+  id           Int                @id @default(autoincrement())
+  codiceisbn   String
+  email        String
+  photo_url    String             @unique
+  prezzo_usato Int
+  User         Users              @relation(fields: [email], references: [email], onDelete: NoAction, onUpdate: NoAction)
+  Isbn_libri   Isbn_libri         @relation(fields: [codiceisbn], references: [codiceisbn], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Adozione_libri {
+  id              Int             @id @default(autoincrement())
+  codicescuola    String?
+  annocorso       Int?
+  sezioneanno     String?
+  tipogradoscuola String?
+  combinazione    String?
+  codiceisbn      String?
+  nuovaadoz       Int?
+  daacquist       Int?
+  consigliato     Int?
+  regione         String?
+  Isbn_libri      Isbn_libri?     @relation(fields: [codiceisbn], references: [codiceisbn], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Isbn_libri {
+  id             Int              @id @default(autoincrement())
+  codiceisbn     String?          @unique(map: "sqlite_autoindex_Isbn_libri_1")
+  autori         String?
+  titolo         String?
+  sottotitolo    String?
+  disciplina     String?
+  volume         String?
+  editore        String?
+  prezzo         Float?
+  Adozione_libri Adozione_libri[]
+  Catalogo_libri Catalogo_libri[]
+}
+
+model Messages {
+  id            Int              @id @default(autoincrement())
+  sender        String
+  receiver      String
+  content       String
+  sendedat      DateTime         @default(now())
+  senderInfo         Users            @relation(name: "sender", fields: [sender], references: [email])
+  receiverInfo         Users            @relation(name: "receiver", fields: [receiver], references: [email])
+}

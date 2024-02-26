@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt'
 
 const bodySchema = z.object({
     email: z.string().email(),
-    password: z.string().min(8).max(30)
+    password: z.string().min(8).max(50)
 })
 
 export async function POST (req: NextRequest) {

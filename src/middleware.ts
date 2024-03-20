@@ -7,7 +7,7 @@ export async function middleware(req: NextRequest) {
     const token = req.cookies.get('token')
     const requestHeaders = new Headers(req.headers)
    
-    if(typeof token?.value === 'string') {
+    if(typeof token?.value === 'string' && token.value.length>=1) {
 
         try {
             const key = new TextEncoder().encode(process.env.JWT_KEY)

@@ -3,7 +3,7 @@ import { z } from 'zod'
 import db from '@/db'
 
 const bodySchema = z.object({
-    contact: z.string().min(1).max(50)
+    contact: z.string().min(1).max(50).email()
 })
 
 export async function POST (req: NextRequest) {

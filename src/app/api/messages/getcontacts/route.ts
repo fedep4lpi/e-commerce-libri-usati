@@ -37,7 +37,9 @@ export async function GET (req: NextRequest) {
         })
 
         contacts = contacts.filter((value, index, self) => {
-            return self.indexOf(value) === index
+            return index === self.findIndex((obj) => {
+                return obj.contact === value.contact
+            })
         })
 
         const response = NextResponse.json({

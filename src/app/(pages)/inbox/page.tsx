@@ -1,10 +1,9 @@
-'use client'
+import React from 'react'
 
-import { useCallback, useEffect, useState } from 'react';
-
-export default function Page() {
-
-  return 
-  <div>
-  </div>
+const page = () => {
+  return (
+    <main></main>
+  )
 }
+
+export default page

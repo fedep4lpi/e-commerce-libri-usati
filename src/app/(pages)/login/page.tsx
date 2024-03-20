@@ -22,10 +22,6 @@ const Login = () => {
       setPassword('')
       location.replace('/buy')
     }
-
-    const response = await data.json()
-
-    console.log(response)
   }
 
   return (

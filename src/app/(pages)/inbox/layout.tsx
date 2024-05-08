@@ -1,4 +1,5 @@
 'use client'
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 const RootLayout = ({
@@ -6,7 +7,6 @@ const RootLayout = ({
 }: {
   children: React.ReactNode
 }) => {
-
   
   const [ contacts, setContacts ] = useState([])
   
@@ -23,21 +23,23 @@ const RootLayout = ({
   useEffect(()=>{fetchContacts()}, [])
 
   return (
-    <main>
-      <ul className=' w-80'>
+    <div className=' h-full flex'>
+      <ul className=' w-80 h-full'>
         { contacts.map(({ contact }, idx) => {
           return (
-            <li 
+            <Link
               key={idx}
-              className=' p-10 bg-violet-200 hover:bg-violet-400 cursor-pointer border-b-2 border-white overflow-x-hidden'
+              href={`/inbox/${contact}`}
             >
-              { contact }
-            </li>
+              <li className=' p-10 bg-violet-200 hover:bg-violet-400 cursor-pointer border-b-2 border-white overflow-x-hidden'>
+                { contact }
+              </li>
+            </Link>
           )
         }) }
       </ul>
       { children }
-    </main>
+    </div>
   )  
 }
 

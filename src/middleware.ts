@@ -22,7 +22,7 @@ export async function middleware(req: NextRequest) {
         }
     }
 
-    const notAllowedIfNotAuthPaths = ['/sell', '/directs', '/account', '/api/messages']
+    const notAllowedIfNotAuthPaths = ['/sell', '/inbox', '/account', '/api/messages']
 
     if(!isAuth && notAllowedIfNotAuthPaths.includes(req.nextUrl.pathname)) {
         return NextResponse.redirect(new URL('/login', req.url))

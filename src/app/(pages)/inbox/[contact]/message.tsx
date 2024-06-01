@@ -9,7 +9,7 @@ const Message = (props: MessageType) => {
     if(props.sender===localStorage.getItem('email')){
         return (
             <div className=" flex justify-start">
-                <div className=' bg-violet-600 rounded-lg my-5 p-3 w-1/3 text-white'>
+                <div className=' bg-blue-700 rounded-lg my-5 p-3 w-1/3 text-white'>
                     <p>
                         {props.content}
                     </p>
@@ -22,7 +22,7 @@ const Message = (props: MessageType) => {
     } else {
         return (
             <div className=" flex justify-end">
-                <div className=' bg-violet-500 rounded-lg my-5 p-3 w-1/3 text-white'>
+                <div className=' bg-violet-600 rounded-lg my-5 p-3 w-1/3 text-white'>
                     <p>
                         {props.content}
                     </p>

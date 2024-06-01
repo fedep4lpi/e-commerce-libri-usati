@@ -3,6 +3,8 @@ import { useEffect, useState } from "react"
 import { decode } from "urlencode"
 import { MessageType } from './types'
 import Message from "./message"
+import Image from 'next/image'
+import sendIcon from "../../../../icons/send.svg"
 
 export default function Page({ 
   params 
@@ -22,6 +24,7 @@ export default function Page({
           contact: params.contact
         })
       })
+      console.log(res)
       const data = (await res.json()).messages
       setMessages(data)
     } catch(err) {
@@ -44,8 +47,11 @@ export default function Page({
           })
         }
       </div>
-      <div className="  p-6 w-full bg-violet-700 rounded-lg">
-        <input type="text" className=" w-full rounded-lg h-8 pl-2"/>
+      <div className="  p-6 w-full bg-violet-700 rounded-lg flex">
+        <textarea name="" id="" className="w-full rounded-l-lg h-8 pl-2"></textarea>
+        <button className=" bg-blue-700 px-5 rounded-r-lg">
+          <Image src={sendIcon} alt="send"/>
+        </button>
       </div>
     </main>   
   )

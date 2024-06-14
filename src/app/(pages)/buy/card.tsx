@@ -8,7 +8,7 @@ import Link from 'next/link'
 const Card = (props: bookSchema) => {
 
   return (
-    <div className=' bg-violet-700 text-white rounded-xl h-48 flex items-center justify-between p-5 my-5'>
+    <div className=' bg-violet-700 text-white rounded-xl h-48 flex items-center justify-between p-5 mb-10'>
       <div className=' h-full aspect-video relative'>
         <Image
           src={`/images/${props.photo_url}`}
@@ -45,7 +45,7 @@ const Card = (props: bookSchema) => {
                 />
               </Link>
               <Link 
-                href={'./'}
+                href={`/inbox/${props.email}`}
                 className=' hover:bg-violet-800 rounded-xl p-2'
               >
                 <Image

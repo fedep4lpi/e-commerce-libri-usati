@@ -9,6 +9,8 @@ body {
   h-screen
   bg-violet-50
 
+  overflow-hidden
+
   /* For navbar */
   pl-16;
 }
@@ -31,4 +33,9 @@ input {
   px-5 
   py-2.5 
   focus:outline-none 
+}
+
+textarea {
+  border: none;
+  resize: none;
 }

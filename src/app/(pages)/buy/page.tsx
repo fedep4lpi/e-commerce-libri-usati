@@ -29,9 +29,9 @@ export default async function Page({
   data = await fetchData()
 
   return (
-    <main className='p-10'>
+    <main className='p-10 pb-28 h-screen'>
       <Search/>
-      <div className=' overflow-y-scroll pt-2'>
+      <div className=' h-full overflow-y-scroll mt-8 pr-3'>
         {data.map((book, idx) => {
           return (
             <Card 
